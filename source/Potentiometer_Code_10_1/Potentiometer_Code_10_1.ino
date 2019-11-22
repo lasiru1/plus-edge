@@ -26,8 +26,8 @@ void loop() {                /* Loop - loops forever (until unpowered or reset) 
 // function to read and map values from potentiometers and map into 0-100
 void ReadPotentiometers()
 {
-  Sp = map(analogRead(S_pin), 0, 1023, 0, 100);
-  kP = map(analogRead(P_pin), 0, 1023, 0, 100);
+  Sp = map(analogRead(S_pin), 0, 1023, 0, 100); // switch ground and positive wires to make 
+  kP = map(analogRead(P_pin), 0, 1023, 0, 100); // potentiometers more intuitive (Clockwise increases)
   kI = map(analogRead(I_pin), 0, 1023, 0, 100);
   kD = map(analogRead(D_pin), 0, 1023, 0, 100);
 }
