@@ -1,2 +1,2 @@
 # LineFollowingRobot
-A line-tracking RC car that will be put into a competition.
+An line tracking car using the arduino microcontroller for UCSD's robotics competition.
