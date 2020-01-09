@@ -14,6 +14,10 @@ int LDR0 = 0, LDR1 = 0, LDR2 = 0, LDR3 = 0, LDR4 = 0, LDR5 = 0, LDR6 = 0;
 
 void setup() {
 
+  pinMode(44, OUTPUT);
+  pinMode(40, OUTPUT);
+  digitalWrite(44, HIGH);
+  digitalWrite(40, HIGH);
   Serial.begin(9600);        // For serial communication set up
 
 }

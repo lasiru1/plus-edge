@@ -31,11 +31,11 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 //  Motors can be switched here (1) <--> (2) (if you see motors responding to
 //  error in the opposite way they should be)
 //  Adjust the same way if you did in 10_3
-Adafruit_DCMotor *Motor1 = AFMS.getMotor(1);
-Adafruit_DCMotor *Motor2 = AFMS.getMotor(2);
+Adafruit_DCMotor *Motor1 = AFMS.getMotor(2);
+Adafruit_DCMotor *Motor2 = AFMS.getMotor(1);
 
 // this is the nominal speed for the motors when not using potentiometer
-int M1Sp = 20, M2Sp = 20;
+int M1Sp = 50, M2Sp = 50;
 int M1SpeedtoMotor, M2SpeedtoMotor;
 
 // Variables for Potentiometer (This part is from Potentiometer_Code 10_1)
@@ -53,7 +53,7 @@ int LDR_Pin[7] = {A8, A9, A10, A11, A12, A13, A14}; // store photoresistor pins
 int LDR[7]; // store photoresistor readings
 
 // Calibration Variables (This part is from Calibration_Code 10_4)
-int   led_Pin = 13; // This is a led set up to indicate what part of the
+int   led_Pin = 48; // This is a led set up to indicate what part of the
                     // calibration you are on.
 float Mn[7];  // You could also connect a larger/more visible LED to Pin 13 or
               // other digital pin
@@ -74,8 +74,6 @@ int   Turn, M1P = 0, M2P = 0;
 float error, lasterror = 0, sumerror = 0;
 float kP, kI, kD;
 
-
-
 // ****************************************************************************/
 // 2) Setup
 // refer to the lab manual
@@ -85,9 +83,17 @@ void setup()
   AFMS.begin();             // For motor setup
   pinMode(led_Pin, OUTPUT); // Note that all analog pins used are INPUTs by
                             // default so don't need pinMode
-  Calibrate();  // 4
+
+  // declare auxiliary power
+  pinMode(44, OUTPUT);
+  pinMode(40, OUTPUT);
+  digitalWrite(44, HIGH);
+  digitalWrite(40, HIGH);
+
+  Calibrate();          // 4
   ReadPotentiometers(); // 5
-  RunMotors(); // 6
+  delay(2000);
+  RunMotors();          // 6
 }
 
 // ****************************************************************************/
@@ -96,9 +102,10 @@ void loop()
 {
   ReadPotentiometers(); // 5
   ReadPhotoResistors(); // 7
-  CalcError(); // 8
-  PID_Turn(); // 9
-  RunMotors();
+  CalcError();          // 8
+  PID_Turn();           // 9
+  RunMotors();          // 6
+  Print();
 }
 
 // ****************************************************************************/
@@ -172,7 +179,7 @@ void Calibrate()
 // 5) Read & Map Potentiometers
 void ReadPotentiometers()
 {
-  SpRead = map(analogRead(S_pin), 0, 1023, 0, 50);
+  SpRead = map(analogRead(S_pin), 0, 1023, 0, 100);
   Sp = SpRead;
   kPRead = map(analogRead(P_pin), 0, 1023, 0, 10);
   kIRead = map(analogRead(I_pin), 0, 1023, 0, 5);
@@ -296,10 +303,10 @@ void CalcError()
 void PID_Turn()
 {
   // *Read values are between 0 and 100, scale to become PID Constants
-  kP = (float)kPRead / 1.;    // each of these scaling factors can change
-                              // depending on how influential you want them 2 be
-  kI = (float)kIRead / 1000.;  // the potentiometers will also scale them
-  kD = (float)kDRead / 100.;
+  kP =  (float)kPRead / 1.;   // each of these scaling factors can change
+  kP = 4.*kP;                 // depending on how influential you want them 2 be
+  kI = (float)kIRead / 500.;  // the potentiometers will also scale them
+  kD = (float)kDRead / 25.;
   // error holds values from -3 to 3
 
   Turn = error * kP + sumerror * kI + (error - lasterror) * kD; //PID!!!!!
@@ -359,6 +366,6 @@ void Print()
   // slow down the output for easier reading if wanted
   // ensure delay is commented when actually running your robot or this will
   // slow down sampling too much
-  // delay(100);
+  // delay(500);
 
 }
